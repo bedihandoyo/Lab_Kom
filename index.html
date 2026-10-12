@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Kom</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ruffle (Flash/SWF Emulator JS) -->
+    <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter & Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px) scale(0.98);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .group:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        @keyframes dynamicGradient {
+            0% { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%); }
+            50% { background: linear-gradient(135deg, #312e81 0%, #4f46e5 50%, #0ea5e9 100%); }
+            100% { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%); }
+        }
+        .animated-hero-bg {
+            animation: dynamicGradient 12s ease infinite;
+            background-size: 200% 200%;
+        }
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(3deg); }
+        }
+        @keyframes floatFast {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(-5deg); }
+        }
+        .animate-float-1 { animation: floatSlow 4s ease-in-out infinite; }
+        .animate-float-2 { animation: floatFast 5s ease-in-out infinite; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- NAVBAR HEADER (Halaman Siswa) -->
+    <header id="mainNavbar" class="sticky top-0 z-50 glass-nav border-b border-slate-200/80 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo & Judul Portal -->
+                <a href="#home" class="flex items-center gap-3 group">
+                    <div class="w-11 h-11 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-graduation-cap text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-heading font-extrabold text-xl tracking-tight text-slate-900 block leading-none">EduSWF<span class="text-blue-600">.ID</span></span>
+                        <span class="text-[10px] text-slate-500 font-medium tracking-wider uppercase">Portal Pembelajaran Interaktif</span>
+                    </div>
+                </a>
+
+                <!-- Navigation Links with Dynamic Dropdowns -->
+                <nav class="hidden md:flex items-center gap-1 lg:gap-2">
+                    <a href="#home" class="px-4 py-2 rounded-lg font-medium text-slate-700 hover:text-blue-600 hover:bg-slate-100/80 transition-colors">
+                        <i class="fa-solid fa-house text-sm mr-1.5 opacity-70"></i>Beranda
+                    </a>
+
+                    <!-- SD Dropdown -->
+                    <div class="relative group">
+                        <button class="px-4 py-2 rounded-lg font-medium text-slate-700 hover:text-blue-600 hover:bg-slate-100/80 transition-colors flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span>Jenjang SD</span>
+                            <i class="fa-solid fa-chevron-down text-xs opacity-60 group-hover:rotate-180 transition-transform duration-300"></i>
+                        </button>
+                        <div class="dropdown-menu absolute top-full left-0 w-72 pt-2 z-50">
+                            <div id="dropdownSD" class="bg-white rounded-2xl shadow-xl border border-slate-100 p-2 space-y-1 max-h-80 overflow-y-auto"></div>
+                        </div>
+                    </div>
+
+                    <!-- SMP Dropdown -->
+                    <div class="relative group">
+                        <button class="px-4 py-2 rounded-lg font-medium text-slate-700 hover:text-blue-600 hover:bg-slate-100/80 transition-colors flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                            <span>Jenjang SMP</span>
+                            <i class="fa-solid fa-chevron-down text-xs opacity-60 group-hover:rotate-180 transition-transform duration-300"></i>
+                        </button>
+                        <div class="dropdown-menu absolute top-full left-0 w-72 pt-2 z-50">
+                            <div id="dropdownSMP" class="bg-white rounded-2xl shadow-xl border border-slate-100 p-2 space-y-1 max-h-80 overflow-y-auto"></div>
+                        </div>
+                    </div>
+
+                    <!-- SMA Dropdown -->
+                    <div class="relative group">
+                        <button class="px-4 py-2 rounded-lg font-medium text-slate-700 hover:text-blue-600 hover:bg-slate-100/80 transition-colors flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                            <span>Jenjang SMA</span>
+                            <i class="fa-solid fa-chevron-down text-xs opacity-60 group-hover:rotate-180 transition-transform duration-300"></i>
+                        </button>
+                        <div class="dropdown-menu absolute top-full right-0 w-72 pt-2 z-50">
+                            <div id="dropdownSMA" class="bg-white rounded-2xl shadow-xl border border-slate-100 p-2 space-y-1 max-h-80 overflow-y-auto"></div>
+                        </div>
+                    </div>
+                </nav>
+
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-slate-400 font-medium hidden sm:inline">Kurikulum Merdeka</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+        <!-- HOME SECTION -->
+        <section id="homeSection" class="space-y-10">
+            <!-- HERO BANNER DENGAN ANIMASI GRAFIS & WARNA BACKGROUND OTOMATIS -->
+            <div class="relative overflow-hidden rounded-3xl animated-hero-bg text-white p-8 sm:p-12 shadow-2xl flex flex-col lg:flex-row items-center justify-between">
+                <div class="relative z-10 max-w-xl space-y-4 mb-8 lg:mb-0">
+                    <span class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs sm:text-sm font-medium border border-white/20">
+                        <i class="fa-solid fa-sparkles text-amber-300"></i> Media Edukasi SWF Interaktif
+                    </span>
+                    <h1 class="font-heading text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                        Media Pembelajaran Flash SWF dalam Satu Wadah.
+                    </h1>
+                    <p class="text-blue-100 text-sm sm:text-base leading-relaxed">
+                        Pilih jenjang sekolah (SD, SMP, SMA) pada menu navigasi di atas untuk mulai memutar animasi dan simulasi interaktif pembelajaran secara mudah.
+                    </p>
+                </div>
+
+                <div class="relative z-10 flex items-center justify-center w-full lg:w-auto p-4">
+                    <div class="relative w-64 h-64 sm:w-80 sm:h-80 flex items-center justify-center">
+                        <div class="absolute w-48 h-48 sm:w-60 sm:h-60 rounded-full bg-white/10 blur-2xl animate-pulse"></div>
+                        <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-2xl animate-float-1 text-white text-4xl sm:text-5xl">
+                            <i class="fa-solid fa-play ml-1"></i>
+                        </div>
+                        <div class="absolute top-2 left-2 sm:top-4 sm:left-4 px-4 py-2 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-lg animate-float-2 flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-xl bg-emerald-400 text-white flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-child"></i></div>
+                            <div>
+                                <p class="text-xs font-bold text-white leading-none">Jenjang SD</p>
+                                <p class="text-[10px] text-blue-200 mt-0.5">IPAS & Matematika</p>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-4 right-2 sm:bottom-6 sm:right-4 px-4 py-2 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-lg animate-float-1 flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-xl bg-blue-400 text-white flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-user-graduate"></i></div>
+                            <div>
+                                <p class="text-xs font-bold text-white leading-none">Jenjang SMP</p>
+                                <p class="text-[10px] text-blue-200 mt-0.5">IPA & TIK Komputer</p>
+                            </div>
+                        </div>
+                        <div class="absolute top-6 right-0 px-3 py-1.5 rounded-xl bg-white/15 backdrop-blur-md border border-white/20 shadow-lg animate-float-2 flex items-center gap-2">
+                            <i class="fa-solid fa-atom text-indigo-300"></i>
+                            <span class="text-xs font-semibold text-white">Praktikum SMA</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Cards Grid -->
+            <div>
+                <h2 class="font-heading text-2xl font-bold text-slate-900 mb-6">Pilih Jenjang Pendidikan</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-child"></i>
+                        </div>
+                        <h3 class="font-heading font-bold text-lg text-slate-900 mb-2">Sekolah Dasar (SD)</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Temukan berbagai animasi interaktif seru untuk pelajaran IPAS, Matematika Dasar, dan ilmu pengetahuan alam tingkat sekolah dasar.
+                        </p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                        <h3 class="font-heading font-bold text-lg text-slate-900 mb-2">SMP / Sederajat</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Jelajahi simulasi IPA Terpadu, rumus matematika, hingga pengenalan komputer untuk membantu pemahaman materi kelas.
+                        </p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-microscope"></i>
+                        </div>
+                        <h3 class="font-heading font-bold text-lg text-slate-900 mb-2">SMA / SMK</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Gunakan laboratorium virtual dan simulasi praktikum Fisika, Kimia, serta materi tingkat lanjut dengan tampilan visual yang menarik.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PLAYER SECTION (SWF Viewer) -->
+        <section id="playerSection" class="hidden space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                <div class="flex items-center gap-3">
+                    <a href="#home" class="p-2 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 transition-colors">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                    <div>
+                        <span id="playerCategory" class="px-2.5 py-0.5 rounded-md bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider">JENJANG</span>
+                        <h2 id="playerTitle" class="font-heading text-2xl font-bold text-slate-900">Judul Modul SWF</h2>
+                    </div>
+                </div>
+                <button onclick="toggleFullscreen()" class="px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 text-sm font-medium flex items-center gap-2">
+                    <i class="fa-solid fa-expand"></i> Layar Penuh
+                </button>
+            </div>
+
+            <div id="swfWrapper" class="relative w-full aspect-video bg-slate-900 rounded-3xl overflow-hidden shadow-2xl flex items-center justify-center border border-slate-800">
+                <div id="ruffleTarget" class="w-full h-full flex items-center justify-center text-white">
+                    <p class="text-slate-400">Memuat emulator Ruffle...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEPARATE ADMIN CPANEL PAGE VIEW (BERSIH TANPA KOTAK STATISTIK) -->
+        <section id="adminPageSection" class="hidden space-y-8">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-gauge-high"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-heading text-3xl font-bold text-slate-900">Halaman cPanel Guru / Admin</h2>
+                        <p class="text-sm text-slate-500">Kelola dan unggah file SWF pembelajaran dengan mudah.</p>
+                    </div>
+                </div>
+                <button onclick="logoutAdmin()" class="px-4 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 font-medium text-sm transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> Keluar cPanel
+                </button>
+            </div>
+
+            <!-- Upload & Management Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Upload Form -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                    <h3 class="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up text-blue-600"></i> Upload File SWF Baru
+                    </h3>
+                    <form onsubmit="handleUploadSWF(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Pilih File .swf</label>
+                            <input type="file" id="swfFileInput" accept=".swf" required onchange="autofillTitle(this)" class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer border border-slate-200 rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Judul Tampil di Dropdown</label>
+                            <input type="text" id="swfTitle" required placeholder="Contoh: Sistem Tata Surya" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Jenjang Sekolah</label>
+                            <select id="swfLevel" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                <option value="SD">Sekolah Dasar (SD)</option>
+                                <option value="SMP">Sekolah Menengah Pertama (SMP)</option>
+                                <option value="SMA">SMA</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Mata Pelajaran</label>
+                            <input type="text" id="swfSubject" required placeholder="Contoh: IPA / Matematika" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                        </div>
+                        <button type="submit" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-md transition-colors">
+                            Simpan & Publikasikan ke Menu
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Modul Table Manager -->
+                <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                    <h3 class="font-heading font-bold text-lg text-slate-900">Daftar Modul Aktif di Sistem</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-xs text-slate-400 uppercase font-semibold">
+                                <tr>
+                                    <th class="py-3 px-4">Judul Modul</th>
+                                    <th class="py-3 px-4">Jenjang</th>
+                                    <th class="py-3 px-4">Mapel</th>
+                                    <th class="py-3 px-4 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminModuleTable" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 mt-12 py-6">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-2">
+            <p>&copy; 2026 Labkom</p>
+            <p class="text-slate-400"></p>
+        </div>
+    </footer>
+
+    <!-- MODAL LOGIN ADMIN -->
+    <div id="adminModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6">
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center mx-auto text-xl">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="font-heading font-bold text-2xl text-slate-900">Autentikasi cPanel Guru</h3>
+                <p class="text-xs text-slate-500">Masukkan password admin untuk mengakses halaman pengelolaan.</p>
+            </div>
+            <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Password Admin</label>
+                    <input type="password" id="adminPassInput" required placeholder="Default: admin123" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                </div>
+                <div class="flex items-center justify-between gap-3 pt-2">
+                    <a href="#home" onclick="closeModalOnly()" class="w-1/2 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-medium text-sm text-center hover:bg-slate-50">Kembali</a>
+                    <button type="submit" class="w-1/2 py-2.5 rounded-xl bg-slate-900 text-white font-medium text-sm hover:bg-slate-800 shadow-md">Masuk cPanel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        const ADMIN_PASS = "admin123*";
+        let defaultModules = [
+            { id: 1, title: 'IPAS SD - Siklus Air', level: 'SD', subject: 'IPAS', url: 'https://www.flashkit.com/movies/Animations/Science/Water_Cy-John_Doe-1234/Water_Cy-John_Doe-1234.swf' },
+            { id: 2, title: 'Matematika SD - Bangun Datar', level: 'SD', subject: 'Matematika', url: 'https://www.flashkit.com/movies/Education/Math/Geometry-Math-2021/Geometry-Math-2021.swf' },
+            { id: 3, title: 'IPA SMP - Sistem Pencernaan', level: 'SMP', subject: 'IPA Terpadu', url: 'https://www.flashkit.com/movies/Education/Biology/Digestive-Bio-8890/Digestive-Bio-8890.swf' },
+            { id: 4, title: 'Informatika SMP - Komponen Komputer', level: 'SMP', subject: 'Informatika', url: 'https://www.flashkit.com/movies/Education/Computers/Hardware-Comp-101/Hardware-Comp-101.swf' },
+            { id: 5, title: 'Fisika SMA - Hukum Newton', level: 'SMA', subject: 'Fisika', url: 'https://www.flashkit.com/movies/Education/Physics/Newton_Law-Sim-404/Newton_Law-Sim-404.swf' },
+            { id: 6, title: 'Kimia SMA - Tabel Periodik', level: 'SMA', subject: 'Kimia', url: 'https://www.flashkit.com/movies/Education/Chemistry/Periodic_Table-Sim-505/Periodic_Table-Sim-505.swf' }
+        ];
+
+        let modulesList = JSON.parse(localStorage.getItem('edu_swf_modules')) || defaultModules;
+
+        function saveModules() {
+            localStorage.setItem('edu_swf_modules', JSON.stringify(modulesList));
+            renderDropdowns();
+        }
+
+        function handleRouting() {
+            const hash = window.location.hash || '#home';
+            
+            document.getElementById('homeSection').classList.add('hidden');
+            document.getElementById('playerSection').classList.add('hidden');
+            document.getElementById('adminPageSection').classList.add('hidden');
+            document.getElementById('adminModal').classList.add('hidden');
+            document.getElementById('mainNavbar').classList.remove('hidden');
+
+            if (hash === '#home' || hash === '') {
+                document.getElementById('homeSection').classList.remove('hidden');
+            } else if (hash === '#admin') {
+                const isAuth = sessionStorage.getItem('edu_admin_auth') === 'true';
+                if (isAuth) {
+                    document.getElementById('mainNavbar').classList.add('hidden'); 
+                    document.getElementById('adminPageSection').classList.remove('hidden');
+                    renderAdminTable();
+                } else {
+                    document.getElementById('homeSection').classList.remove('hidden');
+                    document.getElementById('adminModal').classList.remove('hidden');
+                }
+            } else if (hash.startsWith('#play=')) {
+                document.getElementById('playerSection').classList.remove('hidden');
+                const id = parseInt(hash.replace('#play=', ''));
+                const mod = modulesList.find(m => m.id === id);
+                if (mod) playSWFFile(mod);
+            }
+        }
+
+        window.addEventListener('hashchange', handleRouting);
+
+        function renderDropdowns() {
+            const cSD = document.getElementById('dropdownSD');
+            const cSMP = document.getElementById('dropdownSMP');
+            const cSMA = document.getElementById('dropdownSMA');
+
+            cSD.innerHTML = '<div class="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Materi SD</div>';
+            cSMP.innerHTML = '<div class="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Materi SMP</div>';
+            cSMA.innerHTML = '<div class="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Materi SMA</div>';
+
+            let counts = { SD: 0, SMP: 0, SMA: 0 };
+
+            modulesList.forEach(mod => {
+                const item = `
+                    <a href="#play=${mod.id}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-blue-50 text-slate-700 hover:text-blue-700 transition-colors">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-semibold">
+                            <i class="fa-solid fa-file-waveform"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <p class="font-medium text-sm leading-tight truncate">${escapeHtml(mod.title)}</p>
+                            <p class="text-[11px] text-slate-400">${escapeHtml(mod.subject)}</p>
+                        </div>
+                    </a>
+                `;
+                if(mod.level === 'SD') { cSD.innerHTML += item; counts.SD++; }
+                else if(mod.level === 'SMP') { cSMP.innerHTML += item; counts.SMP++; }
+                else if(mod.level === 'SMA') { cSMA.innerHTML += item; counts.SMA++; }
+            });
+
+            if(counts.SD === 0) cSD.innerHTML += '<p class="px-3 py-2 text-xs text-slate-400 italic">Belum ada materi</p>';
+            if(counts.SMP === 0) cSMP.innerHTML += '<p class="px-3 py-2 text-xs text-slate-400 italic">Belum ada materi</p>';
+            if(counts.SMA === 0) cSMA.innerHTML += '<p class="px-3 py-2 text-xs text-slate-400 italic">Belum ada materi</p>';
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+        }
+
+        function playSWFFile(mod) {
+            document.getElementById('playerTitle').innerText = mod.title;
+            document.getElementById('playerCategory').innerText = mod.level + ' • ' + mod.subject;
+
+            const target = document.getElementById('ruffleTarget');
+            target.innerHTML = '';
+
+            const ruffle = window.RufflePlayer.newest();
+            const player = ruffle.createPlayer();
+            player.className = "w-full h-full border-0";
+            target.appendChild(player);
+
+            player.load(mod.url).catch(() => {
+                target.innerHTML = `<div class="text-center p-6 text-slate-400"><p>Gagal memuat berkas SWF.</p></div>`;
+            });
+        }
+
+        function toggleFullscreen() {
+            const wrapper = document.getElementById('swfWrapper');
+            if (!document.fullscreenElement) wrapper.requestFullscreen();
+            else document.exitFullscreen();
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('adminPassInput').value;
+            if(pass === ADMIN_PASS) {
+                sessionStorage.setItem('edu_admin_auth', 'true');
+                window.location.hash = '#admin';
+                handleRouting();
+            } else {
+                alert('Password admin salah!');
+            }
+        }
+
+        function logoutAdmin() {
+            sessionStorage.removeItem('edu_admin_auth');
+            window.location.hash = '#home';
+            handleRouting();
+        }
+
+        function closeModalOnly() {
+            document.getElementById('adminModal').classList.add('hidden');
+        }
+
+        function autofillTitle(input) {
+            if (input.files && input.files[0]) {
+                let name = input.files[0].name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, ' ');
+                document.getElementById('swfTitle').value = name;
+            }
+        }
+
+        function handleUploadSWF(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('swfFileInput');
+            if (fileInput.files && fileInput.files[0]) {
+                const fileUrl = URL.createObjectURL(fileInput.files[0]);
+                const newMod = {
+                    id: Date.now(),
+                    title: document.getElementById('swfTitle').value,
+                    level: document.getElementById('swfLevel').value,
+                    subject: document.getElementById('swfSubject').value,
+                    url: fileUrl
+                };
+                modulesList.unshift(newMod);
+                saveModules();
+                renderAdminTable();
+                alert('Modul Berhasil Diunggah & Ditambahkan ke Dropdown Siswa!');
+                e.target.reset();
+            }
+        }
+
+        function renderAdminTable() {
+            const tbody = document.getElementById('adminModuleTable');
+            tbody.innerHTML = '';
+            if(modulesList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-slate-400 text-xs">Belum ada modul.</td></tr>';
+                return;
+            }
+            modulesList.forEach(m => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="py-3 px-4 font-medium text-slate-800">${m.title}</td>
+                        <td class="py-3 px-4"><span class="px-2 py-0.5 rounded bg-slate-100 text-xs font-semibold">${m.level}</span></td>
+                        <td class="py-3 px-4 text-slate-500 text-xs">${m.subject}</td>
+                        <td class="py-3 px-4 text-right">
+                            <button onclick="deleteModule(${m.id})" class="text-red-500 hover:text-red-700 text-xs font-semibold">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function deleteModule(id) {
+            if(confirm('Hapus modul?')) {
+                modulesList = modulesList.filter(m => m.id !== id);
+                saveModules();
+                renderAdminTable();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderDropdowns();
+            handleRouting();
+        });
+    </script>
+</body>
+</html>
