@@ -13,6 +13,10 @@
     <!-- Google Fonts: Inter & Outfit -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Firebase SDK (Compat v9) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -136,7 +140,6 @@
 
         <!-- HOME SECTION -->
         <section id="homeSection" class="space-y-10">
-            <!-- HERO BANNER DENGAN ANIMASI GRAFIS & WARNA BACKGROUND OTOMATIS -->
             <div class="relative overflow-hidden rounded-3xl animated-hero-bg text-white p-8 sm:p-12 shadow-2xl flex flex-col lg:flex-row items-center justify-between">
                 <div class="relative z-10 max-w-xl space-y-4 mb-8 lg:mb-0">
                     <span class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs sm:text-sm font-medium border border-white/20">
@@ -237,7 +240,7 @@
             </div>
         </section>
 
-        <!-- SEPARATE ADMIN CPANEL PAGE VIEW (BERSIH TANPA KOTAK STATISTIK) -->
+        <!-- SEPARATE ADMIN CPANEL PAGE VIEW -->
         <section id="adminPageSection" class="hidden space-y-8">
             <div class="flex items-center justify-between border-b border-slate-200 pb-4">
                 <div class="flex items-center gap-3">
@@ -246,7 +249,7 @@
                     </div>
                     <div>
                         <h2 class="font-heading text-3xl font-bold text-slate-900">Halaman cPanel Guru / Admin</h2>
-                        <p class="text-sm text-slate-500">Kelola dan unggah file SWF pembelajaran dengan mudah.</p>
+                        <p class="text-sm text-slate-500">Kelola dan sinkronkan file SWF pembelajaran secara terpusat.</p>
                     </div>
                 </div>
                 <button onclick="logoutAdmin()" class="px-4 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 font-medium text-sm transition-colors flex items-center gap-2">
@@ -256,19 +259,15 @@
 
             <!-- Upload & Management Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Upload Form -->
+                <!-- Add URL Form -->
                 <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
                     <h3 class="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
-                        <i class="fa-solid fa-cloud-arrow-up text-blue-600"></i> Upload File SWF Baru
+                        <i class="fa-solid fa-cloud-arrow-up text-blue-600"></i> Tambah Link / File SWF
                     </h3>
-                    <form onsubmit="handleUploadSWF(event)" class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Pilih File .swf</label>
-                            <input type="file" id="swfFileInput" accept=".swf" required onchange="autofillTitle(this)" class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer border border-slate-200 rounded-xl">
-                        </div>
+                    <form onsubmit="handleAddSWFUrl(event)" class="space-y-4">
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Judul Tampil di Dropdown</label>
-                            <input type="text" id="swfTitle" required placeholder="Contoh: Sistem Tata Surya" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                            <input type="text" id="swfTitle" required placeholder="Contoh: Glad To See You" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Jenjang Sekolah</label>
@@ -280,17 +279,21 @@
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Mata Pelajaran</label>
-                            <input type="text" id="swfSubject" required placeholder="Contoh: IPA / Matematika" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                            <input type="text" id="swfSubject" required placeholder="Contoh: 10 BHS ING" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Nama File SWF di GitHub</label>
+                            <input type="text" id="swfUrl" required placeholder="Contoh: 10_BHS_ING_Glad.swf" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                         </div>
                         <button type="submit" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-md transition-colors">
-                            Simpan & Publikasikan ke Menu
+                            Simpan ke Cloud & Publikasikan
                         </button>
                     </form>
                 </div>
 
                 <!-- Modul Table Manager -->
                 <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
-                    <h3 class="font-heading font-bold text-lg text-slate-900">Daftar Modul Aktif di Sistem</h3>
+                    <h3 class="font-heading font-bold text-lg text-slate-900">Daftar Modul Aktif (Sinkron Cloud)</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
                             <thead class="bg-slate-50 border-b border-slate-200 text-xs text-slate-400 uppercase font-semibold">
@@ -314,7 +317,7 @@
     <footer class="bg-white border-t border-slate-200 mt-12 py-6">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-2">
             <p>&copy; 2026 Labkom</p>
-            <p class="text-slate-400"></p>
+            <p class="text-slate-400">Sinkronisasi Real-Time Cloud Database.</p>
         </div>
     </footer>
 
@@ -331,7 +334,7 @@
             <form onsubmit="handleAdminLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Password Admin</label>
-                    <input type="password" id="adminPassInput" required placeholder="Default: admin123" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                    <input type="password" id="adminPassInput" required placeholder="Default: admin123*" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                 </div>
                 <div class="flex items-center justify-between gap-3 pt-2">
                     <a href="#home" onclick="closeModalOnly()" class="w-1/2 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-medium text-sm text-center hover:bg-slate-50">Kembali</a>
@@ -341,24 +344,38 @@
         </div>
     </div>
 
-    <!-- SCRIPT LOGIC -->
+    <!-- SCRIPT LOGIC DENGAN FIREBASE REALTIME DATABASE -->
     <script>
+        // ==========================================
+        // KONFIGURASI FIREBASE ANDA
+        // ==========================================
+        const firebaseConfig = {
+            databaseURL: "https://labkom-aebd4-default-rtdb.firebaseio.com/"
+        };
+
+        // Inisialisasi Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         const ADMIN_PASS = "admin123*";
-        let defaultModules = [
-            { id: 1, title: 'IPAS SD - Siklus Air', level: 'SD', subject: 'IPAS', url: 'https://www.flashkit.com/movies/Animations/Science/Water_Cy-John_Doe-1234/Water_Cy-John_Doe-1234.swf' },
-            { id: 2, title: 'Matematika SD - Bangun Datar', level: 'SD', subject: 'Matematika', url: 'https://www.flashkit.com/movies/Education/Math/Geometry-Math-2021/Geometry-Math-2021.swf' },
-            { id: 3, title: 'IPA SMP - Sistem Pencernaan', level: 'SMP', subject: 'IPA Terpadu', url: 'https://www.flashkit.com/movies/Education/Biology/Digestive-Bio-8890/Digestive-Bio-8890.swf' },
-            { id: 4, title: 'Informatika SMP - Komponen Komputer', level: 'SMP', subject: 'Informatika', url: 'https://www.flashkit.com/movies/Education/Computers/Hardware-Comp-101/Hardware-Comp-101.swf' },
-            { id: 5, title: 'Fisika SMA - Hukum Newton', level: 'SMA', subject: 'Fisika', url: 'https://www.flashkit.com/movies/Education/Physics/Newton_Law-Sim-404/Newton_Law-Sim-404.swf' },
-            { id: 6, title: 'Kimia SMA - Tabel Periodik', level: 'SMA', subject: 'Kimia', url: 'https://www.flashkit.com/movies/Education/Chemistry/Periodic_Table-Sim-505/Periodic_Table-Sim-505.swf' }
-        ];
+        let modulesList = [];
 
-        let modulesList = JSON.parse(localStorage.getItem('edu_swf_modules')) || defaultModules;
-
-        function saveModules() {
-            localStorage.setItem('edu_swf_modules', JSON.stringify(modulesList));
+        // Ambil data modul secara real-time dari Firebase Database
+        db.ref('modules').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                modulesList = Object.keys(data).map(key => ({
+                    firebaseId: key,
+                    ...data[key]
+                }));
+            } else {
+                modulesList = [];
+            }
             renderDropdowns();
-        }
+            if(document.getElementById('adminPageSection') && !document.getElementById('adminPageSection').classList.contains('hidden')) {
+                renderAdminTable();
+            }
+        });
 
         function handleRouting() {
             const hash = window.location.hash || '#home';
@@ -441,7 +458,7 @@
             target.appendChild(player);
 
             player.load(mod.url).catch(() => {
-                target.innerHTML = `<div class="text-center p-6 text-slate-400"><p>Gagal memuat berkas SWF.</p></div>`;
+                target.innerHTML = `<div class="text-center p-6 text-slate-400"><p>Gagal memuat berkas SWF. Periksa penamaan file di GitHub.</p></div>`;
             });
         }
 
@@ -473,38 +490,31 @@
             document.getElementById('adminModal').classList.add('hidden');
         }
 
-        function autofillTitle(input) {
-            if (input.files && input.files[0]) {
-                let name = input.files[0].name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, ' ');
-                document.getElementById('swfTitle').value = name;
-            }
-        }
-
-        function handleUploadSWF(e) {
+        function handleAddSWFUrl(e) {
             e.preventDefault();
-            const fileInput = document.getElementById('swfFileInput');
-            if (fileInput.files && fileInput.files[0]) {
-                const fileUrl = URL.createObjectURL(fileInput.files[0]);
-                const newMod = {
-                    id: Date.now(),
-                    title: document.getElementById('swfTitle').value,
-                    level: document.getElementById('swfLevel').value,
-                    subject: document.getElementById('swfSubject').value,
-                    url: fileUrl
-                };
-                modulesList.unshift(newMod);
-                saveModules();
-                renderAdminTable();
-                alert('Modul Berhasil Diunggah & Ditambahkan ke Dropdown Siswa!');
-                e.target.reset();
-            }
+            const newMod = {
+                id: Date.now(),
+                title: document.getElementById('swfTitle').value,
+                level: document.getElementById('swfLevel').value,
+                subject: document.getElementById('swfSubject').value,
+                url: document.getElementById('swfUrl').value
+            };
+
+            db.ref('modules').push(newMod, (error) => {
+                if (error) {
+                    alert('Gagal menyimpan ke cloud: ' + error.message);
+                } else {
+                    alert('Modul Berhasil Disimpan ke Cloud & Tersinkron ke Semua Perangkat!');
+                    e.target.reset();
+                }
+            });
         }
 
         function renderAdminTable() {
             const tbody = document.getElementById('adminModuleTable');
             tbody.innerHTML = '';
             if(modulesList.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-slate-400 text-xs">Belum ada modul.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-slate-400 text-xs">Belum ada modul di cloud.</td></tr>';
                 return;
             }
             modulesList.forEach(m => {
@@ -514,23 +524,24 @@
                         <td class="py-3 px-4"><span class="px-2 py-0.5 rounded bg-slate-100 text-xs font-semibold">${m.level}</span></td>
                         <td class="py-3 px-4 text-slate-500 text-xs">${m.subject}</td>
                         <td class="py-3 px-4 text-right">
-                            <button onclick="deleteModule(${m.id})" class="text-red-500 hover:text-red-700 text-xs font-semibold">Hapus</button>
+                            <button onclick="deleteModule('${m.firebaseId}')" class="text-red-500 hover:text-red-700 text-xs font-semibold">Hapus</button>
                         </td>
                     </tr>
                 `;
             });
         }
 
-        function deleteModule(id) {
-            if(confirm('Hapus modul?')) {
-                modulesList = modulesList.filter(m => m.id !== id);
-                saveModules();
-                renderAdminTable();
+        function deleteModule(firebaseId) {
+            if(confirm('Hapus modul dari cloud?')) {
+                db.ref('modules/' + firebaseId).remove((error) => {
+                    if(error) {
+                        alert('Gagal menghapus: ' + error.message);
+                    }
+                });
             }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            renderDropdowns();
             handleRouting();
         });
     </script>
