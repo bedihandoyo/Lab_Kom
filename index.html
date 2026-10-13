@@ -47,11 +47,11 @@
             -webkit-backdrop-filter: blur(12px);
         }
         @keyframes dynamicGradient {
-            0% { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%); }
-            50% { background: linear-gradient(135deg, #312e81 0%, #4f46e5 50%, #0ea5e9 100%); }
-            100% { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%); }
+            0% { background: linear-gradient(135deg, rgba(30, 58, 138, 0.85) 0%, rgba(59, 130, 246, 0.85) 50%, rgba(6, 182, 212, 0.85) 100%); }
+            50% { background: linear-gradient(135deg, rgba(49, 46, 129, 0.85) 0%, rgba(79, 70, 229, 0.85) 50%, rgba(14, 165, 233, 0.85) 100%); }
+            100% { background: linear-gradient(135deg, rgba(30, 58, 138, 0.85) 0%, rgba(59, 130, 246, 0.85) 50%, rgba(6, 182, 212, 0.85) 100%); }
         }
-        .animated-hero-bg {
+        .animated-hero-overlay {
             animation: dynamicGradient 12s ease infinite;
             background-size: 200% 200%;
         }
@@ -80,7 +80,7 @@
                         <i class="fa-solid fa-graduation-cap text-xl"></i>
                     </div>
                     <div>
-                        <span class="font-heading font-extrabold text-xl tracking-tight text-slate-900 block leading-none">EduSWF<span class="text-blue-600">.ID</span></span>
+                        <span class="font-heading font-extrabold text-xl tracking-tight text-slate-900 block leading-none">Lab<span class="text-blue-600">Kom</span></span>
                         <span class="text-[10px] text-slate-500 font-medium tracking-wider uppercase">Portal Pembelajaran Interaktif</span>
                     </div>
                 </a>
@@ -129,7 +129,7 @@
                 </nav>
 
                 <div class="flex items-center gap-2">
-                    <span class="text-xs text-slate-400 font-medium hidden sm:inline">Kurikulum Merdeka</span>
+                    <span class="text-xs text-slate-400 font-medium hidden sm:inline"></span>
                 </div>
             </div>
         </div>
@@ -140,19 +140,32 @@
 
         <!-- HOME SECTION -->
         <section id="homeSection" class="space-y-10">
-            <div class="relative overflow-hidden rounded-3xl animated-hero-bg text-white p-8 sm:p-12 shadow-2xl flex flex-col lg:flex-row items-center justify-between">
+            <!-- BANNER DENGAN BACKGROUND SLIDER FOTO DINAMIS & OVERLAY GRADASI -->
+            <div class="relative overflow-hidden rounded-3xl text-white p-8 sm:p-12 shadow-2xl flex flex-col lg:flex-row items-center justify-between min-h-[420px]">
+                
+                <!-- Background Slideshow Images Container (Dynamic dari Firebase) -->
+                <div id="bannerSlides" class="absolute inset-0 w-full h-full z-0">
+                    <!-- Default placeholder jika belum ada data banner -->
+                    <div class="banner-slide absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-100" style="background-image: url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1600&q=80')"></div>
+                </div>
+
+                <!-- Overlay Gradasi Warna Animasi -->
+                <div class="absolute inset-0 z-1 animated-hero-overlay"></div>
+
+                <!-- Konten Teks di Sebelah Kiri -->
                 <div class="relative z-10 max-w-xl space-y-4 mb-8 lg:mb-0">
                     <span class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs sm:text-sm font-medium border border-white/20">
-                        <i class="fa-solid fa-sparkles text-amber-300"></i> Media Edukasi SWF Interaktif
+                        <i class="fa-solid fa-sparkles text-amber-300"></i> Laboratorium Komedi
                     </span>
                     <h1 class="font-heading text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-                        Media Pembelajaran Flash SWF dalam Satu Wadah.
+                        Media Pembelajaran Berbasis Multimedia
                     </h1>
                     <p class="text-blue-100 text-sm sm:text-base leading-relaxed">
                         Pilih jenjang sekolah (SD, SMP, SMA) pada menu navigasi di atas untuk mulai memutar animasi dan simulasi interaktif pembelajaran secara mudah.
                     </p>
                 </div>
 
+                <!-- Animasi di Sebelah Kanan (Tetap Ada) -->
                 <div class="relative z-10 flex items-center justify-center w-full lg:w-auto p-4">
                     <div class="relative w-64 h-64 sm:w-80 sm:h-80 flex items-center justify-center">
                         <div class="absolute w-48 h-48 sm:w-60 sm:h-60 rounded-full bg-white/10 blur-2xl animate-pulse"></div>
@@ -178,6 +191,11 @@
                             <span class="text-xs font-semibold text-white">Praktikum SMA</span>
                         </div>
                     </div>
+                </div>
+
+                <!-- Indikator Titik (Dots) Navigasi Slide Foto -->
+                <div id="bannerDots" class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/15">
+                    <!-- Generasi titik otomatis via JavaScript -->
                 </div>
             </div>
 
@@ -207,7 +225,7 @@
                         <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl mb-4">
                             <i class="fa-solid fa-microscope"></i>
                         </div>
-                        <h3 class="font-heading font-bold text-lg text-slate-900 mb-2">SMA / SMK</h3>
+                        <h3 class="font-heading font-bold text-lg text-slate-900 mb-2">SMA</h3>
                         <p class="text-sm text-slate-600 leading-relaxed">
                             Gunakan laboratorium virtual dan simulasi praktikum Fisika, Kimia, serta materi tingkat lanjut dengan tampilan visual yang menarik.
                         </p>
@@ -249,7 +267,7 @@
                     </div>
                     <div>
                         <h2 class="font-heading text-3xl font-bold text-slate-900">Halaman cPanel Guru / Admin</h2>
-                        <p class="text-sm text-slate-500">Kelola dan sinkronkan file SWF pembelajaran secara terpusat.</p>
+                        <p class="text-sm text-slate-500">Kelola dan sinkronkan file SWF serta Foto Banner secara terpusat.</p>
                     </div>
                 </div>
                 <button onclick="logoutAdmin()" class="px-4 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 font-medium text-sm transition-colors flex items-center gap-2">
@@ -257,55 +275,98 @@
                 </button>
             </div>
 
-            <!-- Upload & Management Grid -->
+            <!-- Grid Pengelolaan (Modul SWF & Banner) -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Add URL Form -->
-                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
-                    <h3 class="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
-                        <i class="fa-solid fa-cloud-arrow-up text-blue-600"></i> Tambah Link / File SWF
-                    </h3>
-                    <form onsubmit="handleAddSWFUrl(event)" class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Judul Tampil di Dropdown</label>
-                            <input type="text" id="swfTitle" required placeholder="Contoh: Glad To See You" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Jenjang Sekolah</label>
-                            <select id="swfLevel" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                                <option value="SD">Sekolah Dasar (SD)</option>
-                                <option value="SMP">Sekolah Menengah Pertama (SMP)</option>
-                                <option value="SMA">SMA</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Mata Pelajaran</label>
-                            <input type="text" id="swfSubject" required placeholder="Contoh: 10 BHS ING" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Nama File SWF di GitHub</label>
-                            <input type="text" id="swfUrl" required placeholder="Contoh: 10_BHS_ING_Glad.swf" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                        </div>
-                        <button type="submit" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-md transition-colors">
-                            Simpan ke Cloud & Publikasikan
-                        </button>
-                    </form>
+                <!-- Kolom Kiri: Form Tambah SWF & Form Tambah Banner -->
+                <div class="space-y-6">
+                    <!-- Form Tambah SWF -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                        <h3 class="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-cloud-arrow-up text-blue-600"></i> Tambah Link / File SWF
+                        </h3>
+                        <form onsubmit="handleAddSWFUrl(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Judul Tampil</label>
+                                <input type="text" id="swfTitle" required placeholder="Contoh: Glad To See You" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Jenjang Sekolah</label>
+                                <select id="swfLevel" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                    <option value="SD">Sekolah Dasar (SD)</option>
+                                    <option value="SMP">Sekolah Menengah Pertama (SMP)</option>
+                                    <option value="SMA">Sekolah Menengah Atas (SMA)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Mata Pelajaran</label>
+                                <input type="text" id="swfSubject" required placeholder="Contoh: 10 BHS ING" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Nama File SWF di GitHub</label>
+                                <input type="text" id="swfUrl" required placeholder="Contoh: 10_BHS_ING_Glad.swf" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                            </div>
+                            <button type="submit" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-md transition-colors">
+                                Simpan Modul SWF
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Form Tambah Foto Banner -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                        <h3 class="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-image text-emerald-600"></i> Tambah Foto Banner Slider
+                        </h3>
+                        <form onsubmit="handleAddBanner(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Keterangan Foto</label>
+                                <input type="text" id="bannerTitle" required placeholder="Contoh: Kegiatan Praktikum Sains SD" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">URL Foto (Link Gambar)</label>
+                                <input type="url" id="bannerUrl" required placeholder="Contoh: https://i.imgur.com/... atau link foto" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                            </div>
+                            <button type="submit" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-md transition-colors">
+                                Tambah Foto ke Banner
+                            </button>
+                        </form>
+                    </div>
                 </div>
 
-                <!-- Modul Table Manager -->
-                <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
-                    <h3 class="font-heading font-bold text-lg text-slate-900">Daftar Modul Aktif (Sinkron Cloud)</h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-50 border-b border-slate-200 text-xs text-slate-400 uppercase font-semibold">
-                                <tr>
-                                    <th class="py-3 px-4">Judul Modul</th>
-                                    <th class="py-3 px-4">Jenjang</th>
-                                    <th class="py-3 px-4">Mapel</th>
-                                    <th class="py-3 px-4 text-right">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminModuleTable" class="divide-y divide-slate-100"></tbody>
-                        </table>
+                <!-- Kolom Kanan: Tabel Pengelolaan Modul SWF & Tabel Banner -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Modul Table Manager -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                        <h3 class="font-heading font-bold text-lg text-slate-900">Daftar Modul Pembelajaran Aktif</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 border-b border-slate-200 text-xs text-slate-400 uppercase font-semibold">
+                                    <tr>
+                                        <th class="py-3 px-4">Judul Modul</th>
+                                        <th class="py-3 px-4">Jenjang</th>
+                                        <th class="py-3 px-4">Mapel</th>
+                                        <th class="py-3 px-4 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminModuleTable" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Banner Table Manager -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                        <h3 class="font-heading font-bold text-lg text-slate-900">Daftar Foto Banner Slider (Berganti tiap 10 Detik)</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 border-b border-slate-200 text-xs text-slate-400 uppercase font-semibold">
+                                    <tr>
+                                        <th class="py-3 px-4">Pratinjau</th>
+                                        <th class="py-3 px-4">Keterangan</th>
+                                        <th class="py-3 px-4 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminBannerTable" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -316,9 +377,8 @@
     <!-- FOOTER -->
     <footer class="bg-white border-t border-slate-200 mt-12 py-6">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-2">
-            <p>&copy; 2026 Labkom</p>
-            <p class="text-slate-400">Sinkronisasi Real-Time Cloud Database.</p>
-        </div>
+            <p>&copy; 2026 Laboratorium Komedi</p>
+            </div>
     </footer>
 
     <!-- MODAL LOGIN ADMIN -->
@@ -344,7 +404,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT LOGIC DENGAN FIREBASE REALTIME DATABASE -->
+    <!-- SCRIPT LOGIC LENGKAP DENGAN FIREBASE REALTIME DATABASE -->
     <script>
         // ==========================================
         // KONFIGURASI FIREBASE ANDA
@@ -359,8 +419,11 @@
 
         const ADMIN_PASS = "admin123*";
         let modulesList = [];
+        let bannersList = [];
+        let slideInterval;
+        let currentSlideIndex = 0;
 
-        // Ambil data modul secara real-time dari Firebase Database
+        // Ambil data modul secara real-time
         db.ref('modules').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -376,6 +439,93 @@
                 renderAdminTable();
             }
         });
+
+        // Ambil data banner secara real-time
+        db.ref('banners').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                bannersList = Object.keys(data).map(key => ({
+                    firebaseId: key,
+                    ...data[key]
+                }));
+            } else {
+                // Data bawaan awal jika database banner masih kosong
+                bannersList = [
+                    { title: "Sains SD", url: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1600&q=80" },
+                    { title: "Fisika SMA", url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1600&q=80" }
+                ];
+            }
+            renderBannerSlider();
+            if(document.getElementById('adminPageSection') && !document.getElementById('adminPageSection').classList.contains('hidden')) {
+                renderAdminBannerTable();
+            }
+        });
+
+        // Render Slider Banner ke Halaman Depan & Jalankan Auto-slide 10 Detik
+        function renderBannerSlider() {
+            const container = document.getElementById('bannerSlides');
+            const dotsContainer = document.getElementById('bannerDots');
+            if (!container || !dotsContainer) return;
+
+            container.innerHTML = '';
+            dotsContainer.innerHTML = '';
+
+            bannersList.forEach((banner, index) => {
+                // Slide Image
+                const slideDiv = document.createElement('div');
+                slideDiv.className = `banner-slide absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${index === 0 ? 'opacity-100' : 'opacity-0'}`;
+                slideDiv.style.backgroundImage = `url('${banner.url}')`;
+                container.appendChild(slideDiv);
+
+                // Dot Indicator
+                const dotBtn = document.createElement('button');
+                dotBtn.type = 'button';
+                dotBtn.className = `banner-dot rounded-full transition-all duration-300 ${index === 0 ? 'w-2.5 h-2.5 bg-white' : 'w-2 h-2 bg-white/50 hover:bg-white'}`;
+                dotBtn.onclick = () => currentSlide(index);
+                dotsContainer.appendChild(dotBtn);
+            });
+
+            // Reset Timer Slider
+            clearInterval(slideInterval);
+            if (bannersList.length > 1) {
+                slideInterval = setInterval(nextSlide, 10000);
+            }
+        }
+
+        function showSlide(index) {
+            const slides = document.querySelectorAll('.banner-slide');
+            const dots = document.querySelectorAll('.banner-dot');
+            if (slides.length === 0) return;
+
+            currentSlideIndex = (index + slides.length) % slides.length;
+
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('opacity-100', i === currentSlideIndex);
+                slide.classList.toggle('opacity-0', i !== currentSlideIndex);
+            });
+
+            dots.forEach((dot, i) => {
+                if (i === currentSlideIndex) {
+                    dot.classList.remove('w-2', 'h-2', 'bg-white/50');
+                    dot.classList.add('w-2.5', 'h-2.5', 'bg-white');
+                } else {
+                    dot.classList.remove('w-2.5', 'h-2.5', 'bg-white');
+                    dot.classList.add('w-2', 'h-2', 'bg-white/50');
+                }
+            });
+        }
+
+        function nextSlide() {
+            showSlide(currentSlideIndex + 1);
+        }
+
+        function currentSlide(index) {
+            showSlide(index);
+            clearInterval(slideInterval);
+            if (bannersList.length > 1) {
+                slideInterval = setInterval(nextSlide, 10000);
+            }
+        }
 
         function handleRouting() {
             const hash = window.location.hash || '#home';
@@ -394,6 +544,7 @@
                     document.getElementById('mainNavbar').classList.add('hidden'); 
                     document.getElementById('adminPageSection').classList.remove('hidden');
                     renderAdminTable();
+                    renderAdminBannerTable();
                 } else {
                     document.getElementById('homeSection').classList.remove('hidden');
                     document.getElementById('adminModal').classList.remove('hidden');
@@ -412,6 +563,7 @@
             const cSD = document.getElementById('dropdownSD');
             const cSMP = document.getElementById('dropdownSMP');
             const cSMA = document.getElementById('dropdownSMA');
+            if(!cSD) return;
 
             cSD.innerHTML = '<div class="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Materi SD</div>';
             cSMP.innerHTML = '<div class="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Materi SMP</div>';
@@ -504,7 +656,24 @@
                 if (error) {
                     alert('Gagal menyimpan ke cloud: ' + error.message);
                 } else {
-                    alert('Modul Berhasil Disimpan ke Cloud & Tersinkron ke Semua Perangkat!');
+                    alert('Modul Berhasil Disimpan ke Cloud!');
+                    e.target.reset();
+                }
+            });
+        }
+
+        function handleAddBanner(e) {
+            e.preventDefault();
+            const newBanner = {
+                title: document.getElementById('bannerTitle').value,
+                url: document.getElementById('bannerUrl').value
+            };
+
+            db.ref('banners').push(newBanner, (error) => {
+                if (error) {
+                    alert('Gagal menambahkan banner: ' + error.message);
+                } else {
+                    alert('Foto Banner Berhasil Ditambahkan ke Cloud & Terupdate otomatis!');
                     e.target.reset();
                 }
             });
@@ -512,6 +681,7 @@
 
         function renderAdminTable() {
             const tbody = document.getElementById('adminModuleTable');
+            if(!tbody) return;
             tbody.innerHTML = '';
             if(modulesList.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-slate-400 text-xs">Belum ada modul di cloud.</td></tr>';
@@ -531,13 +701,38 @@
             });
         }
 
+        function renderAdminBannerTable() {
+            const tbody = document.getElementById('adminBannerTable');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            if(bannersList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="py-4 text-center text-slate-400 text-xs">Belum ada banner di cloud.</td></tr>';
+                return;
+            }
+            bannersList.forEach(b => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="py-3 px-4">
+                            <div class="w-16 h-10 rounded bg-cover bg-center border border-slate-200" style="background-image: url('${b.url}')"></div>
+                        </td>
+                        <td class="py-3 px-4 font-medium text-slate-800 text-xs">${b.title}</td>
+                        <td class="py-3 px-4 text-right">
+                            <button onclick="deleteBanner('${b.firebaseId}')" class="text-red-500 hover:text-red-700 text-xs font-semibold">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
         function deleteModule(firebaseId) {
             if(confirm('Hapus modul dari cloud?')) {
-                db.ref('modules/' + firebaseId).remove((error) => {
-                    if(error) {
-                        alert('Gagal menghapus: ' + error.message);
-                    }
-                });
+                db.ref('modules/' + firebaseId).remove();
+            }
+        }
+
+        function deleteBanner(firebaseId) {
+            if(confirm('Hapus foto banner ini?')) {
+                db.ref('banners/' + firebaseId).remove();
             }
         }
 
